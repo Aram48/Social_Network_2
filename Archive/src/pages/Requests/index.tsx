@@ -56,8 +56,8 @@ export const Requests = () => {
                                     <span className="fw-bold">{user.name} {user.surname}</span>
                                     <div className="ms-auto">
                                         <button onClick={() => handleAccept(user.id)} className="btn btn-outline-info me-2">Accept</button>
-                                        <button onClick={() => handleDecline(user.id)} className="btn btn-outline-info">Decline</button>
-                                        <Link to={"/profile/" + user.id}>Account</Link>
+                                        <button onClick={() => handleDecline(user.id)} className="btn btn-outline-info me-2">Decline</button>
+                                        <Link to={"/profile/" + user.id}  className="btn btn-outline-info me-2">Account</Link>
                                     </div>
                                 </li>
                             ))
