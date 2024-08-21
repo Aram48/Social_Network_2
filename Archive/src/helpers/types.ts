@@ -35,6 +35,8 @@ export interface IPost {
   title: string;
   picture: string;
   likes: IUser[];
+  isLiked: boolean;
+  comments: IComment[];
 }
 
 export interface IChange {
@@ -42,4 +44,9 @@ export interface IChange {
   newpwd?: string;
   password?: string;
   login?: string;
+}
+export interface IComment {
+  id: number;
+  user: IUser;
+  content: string;
 }

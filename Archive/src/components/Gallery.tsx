@@ -1,42 +1,66 @@
-import { IPost } from '../helpers/types';
-import { BASE } from '../helpers/default'
-import { deletePost } from '../helpers/api';
+import { IPost } from "../helpers/types";
+import { BASE } from "../helpers/default";
+import { handlePostReaction } from "../helpers/api";
+import { Preview } from "./Preview";
+import { useState } from "react";
 
 interface Props {
-    posts: IPost[]
-    setPosts: (posts: IPost[]) => void,
+    posts: IPost[];
+    onUpdate?: (id: number) => void;
 }
 
-export function Gallery({ posts, setPosts }: Props) {
+export function Gallery({ posts, onUpdate }: Props) {
 
-    const handleDelete = (id: number) => {
-        deletePost(id)
-            .then(() => {
-                setPosts(posts.filter(p => p.id !== id));
-            });
-    }
+    const [open, setOpen] = useState<boolean>(false);
+    const [currentPost, setCurrentPost] = useState<IPost | null>(null);
+
+    const handleReaction = (id: number) => {
+        handlePostReaction(id).then(() => {
+            if (onUpdate) {
+                onUpdate(id);
+            }
+        });
+    };
 
     return (
-        <div className='list'>
-            {
-                posts.map(post => {
-                    return <div key={post.id}>
+        <div className="list">
+            {posts.map((post) => (
+                <div key={post.id}>
+                    <div className="post">
+                        <img src={BASE + post.picture} alt={post.title} />
+                        <div className="cover-post"></div>
                         <img
-                            src={BASE + post.picture}
-                        />
-                        <p>{post.title}
-                            <small>({post.likes.length} likes</small>)
-                            <strong>
-                                <button onClick={() => handleDelete(post.id)} className='btn btn-info'>Delete</button>
-                            </strong>
-                        </p>
-                        <img
-                            className='small-icon'
-                            src="https://cdn4.iconfinder.com/data/icons/utilities-part-3/64/empty_heart-512.png"
+                            onClick={() => handleReaction(post.id)}
+                            src={
+                                !post.isLiked
+                                    ? "https://cdn0.iconfinder.com/data/icons/sweets/128/heart_love_white.png"
+                                    : "https://cdn0.iconfinder.com/data/icons/sweets/128/heart_love_pink.png"
+                            }
+                            alt="Like button"
+                            className="like-button"
                         />
                     </div>
-                })
-            }
-        </div >
-    )
+                    <p>
+                        {post.title}{" "}
+                        <small
+                            onClick={() => {
+                                setOpen(true);
+                                setCurrentPost(post);
+                            }}
+                            title={post.likes.map((e) => e.name).join(", ")}
+                        >
+                            ({post.likes.length} likes)
+                        </small>
+                    </p>
+                </div>
+            ))}
+            {currentPost && (
+                <Preview
+                    post={currentPost}
+                    open={open}
+                    onClose={() => setOpen(false)}
+                />
+            )}
+        </div>
+    );
 }

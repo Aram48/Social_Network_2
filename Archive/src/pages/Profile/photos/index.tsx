@@ -11,7 +11,9 @@ export const Photos = () => {
     const [text, setText] = useState<string>("")
 
     const handlePost = () => {
-        const file = photo.current?.files?.[0]
+
+        const file = photo.current?.files?.[0];
+
         if (file) {
             const form = new FormData()
             form.append('photo', file)
@@ -19,18 +21,17 @@ export const Photos = () => {
 
             handlePostUpload(form)
                 .then(response => {
-                    setPosts([...posts, response.payload as IPost])
-                })
+                    setPosts([...posts, response.payload as IPost]);
+                });
         }
     }
 
     useEffect(() => {
         getAllPosts()
             .then(response => {
-                setPosts(response.payload as IPost[])
-            })
-
-    }, [])
+                setPosts(response.payload as IPost[]);
+            });
+    }, []);
 
     return <div className="container">
         <h1>Posts</h1>
@@ -49,9 +50,6 @@ export const Photos = () => {
 
         <Gallery
             posts={posts}
-            setPosts={setPosts}
         />
-
-
     </div>
 }

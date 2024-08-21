@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react"
-import { useNavigate, useParams } from "react-router-dom"
+import { useNavigate, useOutletContext, useParams } from "react-router-dom"
 import { follow, getAccount, unfollow, cancelRequest } from "../../../helpers/api"
-import { IAccount } from "../../../helpers/types"
+import { IAccount, IContext } from "../../../helpers/types"
 import { BASE, DEF } from "../../../helpers/default"
 import { Gallery } from "../../../components/Gallery"
-
 
 export const Account = () => {
 
     const { id } = useParams()
+    const { account } = useOutletContext<IContext>();
     const [userAccount, setUserAccount] = useState<IAccount | null>(null)
     const navigate = useNavigate()
 
@@ -24,6 +24,28 @@ export const Account = () => {
                 })
         }
     }, [id])
+
+    const handlePostUpdate = (id: number) => {
+        if (userAccount) {
+            setUserAccount({
+                ...userAccount,
+                posts: userAccount.posts.map(post => {
+                    if (post.id != id) {
+                        return post
+                    }
+                    post.isLiked = !post.isLiked
+                    if (!post.isLiked) {
+                        post.likes = post.likes.filter(a => a.id != account.id)
+                    } else {
+                        post.likes.push(account)
+                    }
+                    return post
+
+                })
+            })
+
+        }
+    }
 
     const followUser = () => {
         if (userAccount?.id) {
@@ -143,7 +165,7 @@ export const Account = () => {
                                 <h6>following</h6>
                             </div>
                             <div className="p-3 bg-danger text-center skill-block">
-                                <h4>{userAccount.posts.length || 0} </h4>
+                                <h4>{userAccount.posts?.length || 0} </h4>
                                 <h6>posts</h6>
                             </div>
                         </div>
@@ -153,7 +175,10 @@ export const Account = () => {
         </div>
         {
             userAccount.isPrivate == 0 &&
-            <Gallery posts={userAccount.posts} />
+            <Gallery
+                posts={!userAccount.posts ? [] : userAccount.posts}
+                onUpdate={handlePostUpdate}
+            />
         }
     </>
 }

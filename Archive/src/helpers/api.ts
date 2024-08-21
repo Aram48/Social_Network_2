@@ -112,6 +112,21 @@ export const requestsAccept = async (id: number): Promise<IResponse> => {
 }
 
 export const requestsDecline = async (id: number): Promise<IResponse> => {
-  const response = await Axios.patch(`/requests/accept/${id}`);
+  const response = await Axios.patch(`/requests/decline/${id}`);
   return response.data
+}
+
+export const handlePostReaction = async (id: number): Promise<IResponse> => {
+  const response = await Axios.post("/posts/react/" + id);
+  return response.data;
+}
+
+export const getPostById = async (id: number): Promise<IResponse> => {
+  const response = await Axios.get(`/posts/${id}`);
+  return response.data;
+}
+
+export const handlePostComment = async (id: number, commentText: { text: string }): Promise<IResponse> => {
+  const response = await Axios.post(`/posts/comment/${id}`, commentText);
+  return response.data;
 }

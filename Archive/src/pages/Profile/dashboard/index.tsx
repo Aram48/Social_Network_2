@@ -20,6 +20,7 @@ export function Profile() {
   const photo = useRef<HTMLInputElement | null>(null);
 
   const choosePhoto = () => {
+
     const file = photo.current?.files?.[0];
     if (file) {
       const form = new FormData();
